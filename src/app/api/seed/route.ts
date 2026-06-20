@@ -22,6 +22,9 @@ export async function POST() {
 
     // Clear existing events
     await Event.deleteMany({});
+    
+    // Explicitly create indexes (Crucial L5 Database Scalability step)
+    await Event.createIndexes();
 
     const now = Date.now();
     const demoUrl = "http://localhost:3000/demo";

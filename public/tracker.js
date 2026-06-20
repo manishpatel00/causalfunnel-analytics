@@ -39,14 +39,31 @@
     return match ? decodeURIComponent(match[1]) : null;
   }
 
+  /* ── requestIdleCallback Polyfill ── */
+  var requestIdle =
+    window.requestIdleCallback ||
+    function (cb) {
+      var start = Date.now();
+      return setTimeout(function () {
+        cb({
+          didTimeout: false,
+          timeRemaining: function () {
+            return Math.max(0, 50 - (Date.now() - start));
+          },
+        });
+      }, 1);
+    };
+
   /* ── Queue & Flush ── */
   var queue = [];
   var flushTimer = null;
 
   function enqueue(event) {
-    queue.push(event);
-    if (flushTimer) clearTimeout(flushTimer);
-    flushTimer = setTimeout(flush, 500); // batch within 500ms
+    requestIdle(function () {
+      queue.push(event);
+      if (flushTimer) clearTimeout(flushTimer);
+      flushTimer = setTimeout(flush, 500); // batch within 500ms
+    });
   }
 
   function flush() {

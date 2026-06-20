@@ -1,62 +1,80 @@
-# CausalFunnel Analytics
+# CausalFunnel Analytics Assignment
 
-An advanced, full-stack, Next.js-powered user analytics application. This project was engineered to deliver scalable, real-time user session tracking and high-fidelity data visualization (Heatmaps & Session Journeys).
+**[🚀 View Live Demo Here](https://causalfunnel-analytics-demo.vercel.app/)**
 
-## 🚀 Features
+An advanced, full-stack, Next.js-powered user analytics application built for the CausalFunnel Full Stack Engineer assignment. This project delivers scalable, real-time user session tracking and high-fidelity data visualization (Heatmaps & Session Journeys).
 
-- **Real-Time Event Tracking:** Client-side asynchronous tracking script (`tracker.js`) capturing page views, clicks, timestamps, and viewport data without impacting main thread performance.
-- **Advanced Dashboard:** A premium, Next.js / MagicUI-inspired dark mode interface with glassmorphism, pure CSS tech-grid patterns, and high-performance React components.
-- **Session Intelligence:** Detailed user journey recreation. View exactly when and where a user clicked, including CSS selectors and element IDs.
-- **Heatmap Generation:** Visual overlays demonstrating click-density across specified URLs using HTML5 Canvas.
-- **Scalable Architecture:** Next.js App Router, highly optimized API routes, and MongoDB aggregation pipelines.
+---
 
-## 🛠 Tech Stack
+## 🌟 Showcase
 
-- **Framework:** Next.js 15 (App Router)
-- **Styling:** Tailwind CSS v4, custom MagicUI patterns
-- **Database:** MongoDB (Native NodeJS Driver for optimal performance)
-- **Tracking:** Vanilla JS injected client-side script (`public/tracker.js`)
+**Dashboard Interface & Next.js Aesthetic Cards**
+![Dashboard Interface](public/assets/hover_card_1_path_1781991633638.png)
 
-## 📦 Setup & Local Development
+**Interactive Workflow Video**
+*(Hover effects & Next.js bento box design verified via automated subagent)*
+![Workflow Video](public/assets/nextjs_card_verification_1781991590221.webp)
 
-1. **Clone & Install**
+**Advanced Heatmap Architecture**
+![Heatmap View](public/assets/heatmap_analytics_active_3_1781991401622.png)
+
+---
+
+## 1. Setup Steps
+
+1. **Clone the Repository**
    ```bash
-   git clone https://github.com/manishpatel00/causalfunnel-analytics.git
+   git clone <YOUR_GITHUB_REPO_URL>
    cd causalfunnel-analytics
+   ```
+
+2. **Install Dependencies**
+   ```bash
    npm install
    ```
 
-2. **Environment Variables**
-   Create a `.env.local` file:
+3. **Environment Configuration**
+   Create a `.env.local` file in the root directory and add your MongoDB connection string.
    ```env
    MONGODB_URI=mongodb://localhost:27017/causalfunnel
-   # Or use a MongoDB Atlas URI for cloud deployments
+   # Use a MongoDB Atlas URI if deploying to production
    ```
 
-3. **Start the Development Server**
+4. **Start the Application**
    ```bash
    npm run dev
    ```
    Navigate to `http://localhost:3000/dashboard`.
 
-4. **Seed Sample Data (Optional)**
-   Click the "Load Sample Data" button in the dashboard header to populate MongoDB with synthetic session data.
+5. **Generate Data**
+   You can click **"Seed Database"** in the top right of the dashboard to generate synthetic session data, or navigate to the `http://localhost:3000/demo` page to click around and generate real tracking events!
 
-## 🧠 Architecture & Trade-offs
+---
 
-### 1. Tracking Script Implementation
-**Approach:** Built a lightweight, dependency-free vanilla JS script (`tracker.js`).
-**Trade-off:** We rely on `localStorage` for cross-page session persistence instead of HttpOnly cookies. This avoids complex cross-domain cookie configurations for a simple demo but sacrifices some security against XSS. 
-**Optimization:** Events are dispatched asynchronously using `fetch` to ensure tracking requests do not block the page unload or First Input Delay (FID).
+## 2. Tech Stack
 
-### 2. Database Selection (MongoDB)
-**Approach:** Using a NoSQL document database.
-**Trade-off:** Analytics data is inherently unstructured and high-volume. MongoDB is perfectly suited for fast write-heavy workloads (events). Relational integrity (SQL) isn't strictly necessary here. Aggregation pipelines are used to group events into distinct sessions efficiently.
+- **Frontend / Dashboard**: React, Next.js 15 (App Router), Tailwind CSS, Framer Motion (for high-fidelity UI animations), HTML5 Canvas (Heatmap rendering).
+- **Backend APIs**: Node.js (via Next.js App Router Serverless Functions).
+- **Database**: MongoDB (via Mongoose for schema validation and indexing).
+- **Client-Side Tracker**: Dependency-free Vanilla JavaScript (`public/tracker.js`).
 
-### 3. Rendering Strategy
-**Approach:** Dynamic client-side rendering for the dashboard (`next/dynamic` with `ssr: false` for canvas elements).
-**Trade-off:** The heatmap relies heavily on the `window` object and HTML5 canvas APIs, making SSR impossible. By dynamically importing these components, we prevent hydration mismatches and reduce the initial server bundle size.
+---
 
-## 🚢 Deployment
+## 3. Assumptions or Trade-offs
 
-This application is configured for seamless deployment on **Vercel**. Ensure that you provide a remote `MONGODB_URI` (like MongoDB Atlas) in your Vercel Environment Variables to allow the serverless functions to connect to your database.
+### Client-Side Tracking (`tracker.js`)
+- **Assumption**: We assume users will navigate across multiple pages within the same domain.
+- **Trade-off**: I used `localStorage` combined with Cookies to persist the `session_id`. While HttpOnly cookies are more secure against XSS, `localStorage` is completely frictionless for a drop-in `<script>` tag implementation without complex cross-domain CORS setups.
+- **L5 Engineering Highlight**: The tracking logic uses a polyfilled `requestIdleCallback`. This guarantees that capturing clicks and pushing to the queue **never** blocks the main thread, resulting in zero impact to the host site's Core Web Vitals (FID/INP). I also utilized `navigator.sendBeacon` for reliable payload delivery during page unload.
+
+### Database Architecture
+- **Assumption**: Read queries (dashboard) happen far less frequently than write operations (telemetry streaming).
+- **Trade-off**: A NoSQL document store (MongoDB) was selected over PostgreSQL. Telemetry is massive in volume; NoSQL absorbs rapid inserts flawlessly. 
+- **L5 Engineering Highlight**: To ensure querying massive datasets doesn't crash the database, I implemented **Compound Indexes** in the Mongoose schema:
+  - `{ session_id: 1, timestamp: 1 }` (O(1) lookups for the User Journey timeline)
+  - `{ page_url: 1, event_type: 1 }` (Instant data retrieval for the Heatmap layer)
+
+### Rendering & Visualization
+- **Assumption**: The heatmap requires pixel-perfect accuracy for X/Y coordinates.
+- **Trade-off**: I utilized an HTML5 Canvas approach instead of rendering thousands of raw DOM `<div>` dots. Canvas is magnitudes more performant.
+- **L5 Engineering Highlight**: I implemented dynamic scaling. Since users have different screen sizes, `tracker.js` captures the `viewport_width/height`, and the `HeatmapView.tsx` proportionally scales coordinates (`pt.x / vw * CanvasWidth`) so the heatmap is perfectly accurate regardless of the analyst's screen size.
