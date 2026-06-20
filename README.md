@@ -1,6 +1,6 @@
 # CausalFunnel Analytics Assignment
 
-**[🚀 View Live Demo Here](https://causalfunnel-analytics-demo.vercel.app/)**
+**[View Live Link ](https://causalfunnel-analytics-demo.vercel.app/)**
 
 An advanced, full-stack, Next.js-powered user analytics application built for the CausalFunnel Full Stack Engineer assignment. This project delivers scalable, real-time user session tracking and high-fidelity data visualization (Heatmaps & Session Journeys).
 
@@ -9,45 +9,13 @@ An advanced, full-stack, Next.js-powered user analytics application built for th
 ## 🌟 Showcase
 
 **Dashboard Interface & Next.js Aesthetic Cards**
-![Dashboard Interface](public/assets/hover_card_1_path_1781991633638.png)
 
-**Interactive Workflow Video**
-*(Hover effects & Next.js bento box design verified via automated subagent)*
-![Workflow Video](public/assets/nextjs_card_verification_1781991590221.webp)
+<img width="1377" height="832" alt="image" src="https://github.com/user-attachments/assets/b9eef191-4c64-42b8-ba0c-33a7e828dffe" />
+
 
 **Advanced Heatmap Architecture**
-![Heatmap View](public/assets/heatmap_analytics_active_3_1781991401622.png)
 
----
-
-## 1. Setup Steps
-
-1. **Clone the Repository**
-   ```bash
-   git clone <YOUR_GITHUB_REPO_URL>
-   cd causalfunnel-analytics
-   ```
-
-2. **Install Dependencies**
-   ```bash
-   npm install
-   ```
-
-3. **Environment Configuration**
-   Create a `.env.local` file in the root directory and add your MongoDB connection string.
-   ```env
-   MONGODB_URI=mongodb://localhost:27017/causalfunnel
-   # Use a MongoDB Atlas URI if deploying to production
-   ```
-
-4. **Start the Application**
-   ```bash
-   npm run dev
-   ```
-   Navigate to `http://localhost:3000/dashboard`.
-
-5. **Generate Data**
-   You can click **"Seed Database"** in the top right of the dashboard to generate synthetic session data, or navigate to the `http://localhost:3000/demo` page to click around and generate real tracking events!
+<img width="1023" height="836" alt="image" src="https://github.com/user-attachments/assets/383b44c0-bfa1-4a5d-8178-ea614953bfb7" />
 
 ---
 
@@ -78,3 +46,35 @@ An advanced, full-stack, Next.js-powered user analytics application built for th
 - **Assumption**: The heatmap requires pixel-perfect accuracy for X/Y coordinates.
 - **Trade-off**: I utilized an HTML5 Canvas approach instead of rendering thousands of raw DOM `<div>` dots. Canvas is magnitudes more performant.
 - **L5 Engineering Highlight**: I implemented dynamic scaling. Since users have different screen sizes, `tracker.js` captures the `viewport_width/height`, and the `HeatmapView.tsx` proportionally scales coordinates (`pt.x / vw * CanvasWidth`) so the heatmap is perfectly accurate regardless of the analyst's screen size.
+
+
+---
+
+## Setup Steps
+
+1. **Clone the Repository**
+   ```bash
+   git clone <YOUR_GITHUB_REPO_URL>
+   cd causalfunnel-analytics
+   ```
+
+2. **Install Dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Environment Configuration**
+   Create a `.env.local` file in the root directory and add your MongoDB connection string.
+   ```env
+   MONGODB_URI=mongodb://localhost:27017/causalfunnel
+   # Use a MongoDB Atlas URI if deploying to production
+   ```
+
+4. **Start the Application**
+   ```bash
+   npm run dev
+   ```
+   Navigate to `http://localhost:3000/dashboard`.
+
+5. **Generate Data**
+   You can click **"Seed Database"** in the top right of the dashboard to generate synthetic session data, or navigate to the `http://localhost:3000/demo` page to click around and generate real tracking events!
